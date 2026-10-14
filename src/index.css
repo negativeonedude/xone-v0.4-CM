@@ -1,0 +1,154 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: 'Markazi Text', serif;
+  --font-serif: 'Markazi Text', serif;
+}
+
+@layer base {
+  html, body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Markazi Text', serif;
+    direction: rtl;
+    background-color: #E3E8EF;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Universal font application to ensure every text element uses Markazi Text */
+  *, *::before, *::after, input, button, select, textarea {
+    font-family: 'Markazi Text', serif;
+  }
+
+  /* Preserve Material Symbols icon font so icon ligatures work properly */
+  .material-symbols-outlined,
+  .material-icons,
+  [class*="material-symbols"] {
+    font-family: 'Material Symbols Outlined' !important;
+    font-weight: normal;
+    font-style: normal;
+    display: inline-block;
+    line-height: 1;
+    text-transform: none;
+    letter-spacing: normal;
+    word-wrap: normal;
+    white-space: nowrap;
+    direction: ltr;
+  }
+
+  /* Preserve monospace numbers/codes when specifically requested */
+  code, kbd, samp, pre, .font-mono {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace !important;
+  }
+}
+
+.font-markazi {
+  font-family: 'Markazi Text', serif !important;
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #dbe2eb;
+}
+::-webkit-scrollbar-thumb {
+  background: #94a3b8;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #00716b;
+}
+
+/* Tabular Numerals */
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Blueprint dot background */
+.blueprint-grid-bg {
+  background-image: radial-gradient(#00716b 0.75px, transparent 0.75px), radial-gradient(#00716b 0.75px, #E3E8EF 0.75px);
+  background-size: 32px 32px;
+  background-position: 0 0, 16px 16px;
+}
+
+/* Minimal Dissolve Transitions */
+@keyframes dissolveIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes modalDissolve {
+  from {
+    opacity: 0;
+    transform: scale(0.99);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes backdropDissolve {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.animate-dissolve {
+  animation: dissolveIn 260ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-dissolve-slow {
+  animation: dissolveIn 400ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-modal-dissolve {
+  animation: modalDissolve 240ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-backdrop-dissolve {
+  animation: backdropDissolve 220ms ease-out forwards;
+}
+
+@keyframes dissolveOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes modalDissolveOut {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.985);
+  }
+}
+
+.animate-dissolve-out {
+  animation: dissolveOut 220ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-modal-dissolve-out {
+  animation: modalDissolveOut 200ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-backdrop-dissolve-out {
+  animation: dissolveOut 200ms ease-in forwards;
+}

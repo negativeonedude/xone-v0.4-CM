@@ -1,0 +1,6 @@
+{
+  "name": "Xone CDE - سامانه یکپارچه مدیریت ساخت باران",
+  "description": "پلتفرم جامع محیط داده مشترک CDE طبق استاندارد ISO 19650، هماهنگی BIM، تاییدات اسناد و پایش ساخت گروه ساختمانی باران",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
