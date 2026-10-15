@@ -54,8 +54,10 @@ export default function App() {
   };
 
   // Smooth scrolling (Lenis)
+  const lenisRef = React.useRef<Lenis | null>(null);
   useEffect(() => {
     const lenis = new Lenis({ lerp: 0.1 });
+    lenisRef.current = lenis;
     let raf: number;
     const loop = (time: number) => {
       lenis.raf(time);
@@ -67,6 +69,12 @@ export default function App() {
       lenis.destroy();
     };
   }, []);
+
+  // Always load each view scrolled to the top
+  useEffect(() => {
+    lenisRef.current?.scrollTo(0, { immediate: true });
+    window.scrollTo(0, 0);
+  }, [currentTab]);
 
   // Keyboard shortcut for Cmd+K / Ctrl+K
   useEffect(() => {
