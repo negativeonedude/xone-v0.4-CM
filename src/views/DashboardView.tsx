@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Project, NavigationTab } from '../types';
+import { Project, NavigationTab, ClashPreset } from '../types';
 
 interface DashboardViewProps {
   currentProject: Project;
@@ -8,6 +8,7 @@ interface DashboardViewProps {
   onOpenUpload: () => void;
   onTriggerToast: (title: string, desc: string, type?: 'success' | 'error' | 'info') => void;
   onOpenExcelIpc?: () => void;
+  onOpenClashFilters?: (preset: ClashPreset) => void;
 }
 
 type CameraKey = 'cam1' | 'cam2' | 'drone';
@@ -142,6 +143,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
   onOpenDocumentDossier,
   onTriggerToast,
   onOpenExcelIpc,
+  onOpenClashFilters,
 }) => {
   const [activeCamera, setActiveCamera] = useState<CameraKey>('cam1');
   const [bimLayerArc, setBimLayerArc] = useState(true);
@@ -856,13 +858,75 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
               </div>
             </div>
 
-            {/* 8-week vector histogram of BIM clashes */}
-            <div className="my-3 rounded-xl overflow-hidden border border-slate-200/80 shadow-xs bg-white">
-              <img
-                alt="هیستوگرام ۸ هفته‌ای تعارضات BIM"
-                className="w-full h-auto object-contain block"
-                src="https://lh3.googleusercontent.com/aida/AEtjO1XUwQZxISrdfZpV_n18o0Hj7x8UMoUZxKhJXVRUMs4GGSgnIfsZJO3mL4dkLaR2xkY0McWJp7dEHvyflOgc9AKi8sRzVqH3gjFxWNYSJCW2piT7NvxpaIgpVBQH-hotNpFccIRutmWUyhbn7VcRRPnmW44rYa-m93gU8QFotnygrtgLLRx2OKoT2253xKa4STzaSbWRdDnaDdWAXiZpCCu_RFHRjkzFYEFXEhqywlMnPNoFt-GS4Bzpftw"
-              />
+            {/* 8-Week Unsolved Clashes Histogram (interactive) */}
+            <div className="p-4 rounded-xl bg-slate-50 border border-slate-200/80 space-y-3">
+              <div className="flex items-center justify-between">
+                <div>
+                  <span className="font-bold text-slate-800 text-xs block">هیستوگرام تعارضات حل‌نشده (۸ هفته گذشته)</span>
+                  <span className="text-[10px] text-slate-400 block mt-0.5">تعداد کلش‌های باز و فعال در پایان هر هفته</span>
+                </div>
+                <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200 inline-flex items-center gap-1 font-mono shrink-0">
+                  <span className="material-symbols-outlined text-xs">trending_down</span>
+                  ۷۷٪- بهبود
+                </span>
+              </div>
+
+              {/* 8-Week Bars */}
+              <div className="grid grid-cols-8 gap-1.5 pt-2 items-end h-28 border-b border-slate-200 pb-1 text-center">
+                {[
+                  { week: 'هـ۱', count: 52, height: '100%', isCurrent: false },
+                  { week: 'هـ۲', count: 48, height: '92%', isCurrent: false },
+                  { week: 'هـ۳', count: 43, height: '82%', isCurrent: false },
+                  { week: 'هـ۴', count: 36, height: '69%', isCurrent: false },
+                  { week: 'هـ۵', count: 31, height: '59%', isCurrent: false },
+                  { week: 'هـ۶', count: 25, height: '48%', isCurrent: false },
+                  { week: 'هـ۷', count: 19, height: '36%', isCurrent: false },
+                  { week: 'جاری', count: 12, height: '23%', isCurrent: true },
+                ].map((item, idx) => (
+                  <div
+                    key={idx}
+                    onClick={() =>
+                      onOpenClashFilters?.({
+                        status: 'open',
+                        label: `هفته ${item.week} • ${item.count} تعارض حل‌نشده`,
+                      })
+                    }
+                    className="flex flex-col items-center justify-end h-full gap-1 group cursor-pointer"
+                    title={`مشاهده لیست ${item.count} تعارض حل‌نشده هفته ${item.week}`}
+                  >
+                    <span
+                      className={`text-[10px] font-mono leading-none transition-transform group-hover:scale-110 ${
+                        item.isCurrent ? 'font-bold text-rose-600' : 'text-slate-500 font-medium'
+                      }`}
+                    >
+                      {item.count}
+                    </span>
+                    <div
+                      className={`w-full rounded-t transition-all ${
+                        item.isCurrent
+                          ? 'bg-rose-500 shadow-2xs group-hover:bg-rose-400'
+                          : 'bg-slate-300 group-hover:bg-[#00716B]/60'
+                      }`}
+                      style={{ height: item.height }}
+                    ></div>
+                    <span
+                      className={`text-[9px] font-mono mt-0.5 leading-none ${
+                        item.isCurrent ? 'font-bold text-slate-800' : 'text-slate-400'
+                      }`}
+                    >
+                      {item.week}
+                    </span>
+                  </div>
+                ))}
+              </div>
+
+              <div className="flex items-center justify-between text-[10px] text-slate-500 pt-0.5">
+                <span className="flex items-center gap-1 text-[#00716B] font-medium">
+                  <span className="material-symbols-outlined text-xs">ads_click</span>
+                  برای مشاهده لیست تعارضات هر هفته، روی ستون آن کلیک کنید
+                </span>
+                <span className="font-bold text-slate-700">وضعیت کنونی: <strong className="text-rose-600 font-mono">۱۲</strong> تعارض باز</span>
+              </div>
             </div>
           </div>
 

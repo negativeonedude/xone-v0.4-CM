@@ -1,10 +1,11 @@
-import React, { useState, useMemo } from 'react';
-import { ClashItem } from '../types';
+import React, { useState, useMemo, useEffect } from 'react';
+import { ClashItem, ClashPreset } from '../types';
 import { CLASHES } from '../data/mockData';
 import { ClashDetailModal } from '../modals/ClashDetailModal';
 
 interface ClashDetectionViewProps {
   onTriggerToast: (title: string, desc: string, type?: 'success' | 'error' | 'info') => void;
+  initialFilters?: ClashPreset | null;
 }
 
 // Matrix Floor Rows
@@ -64,7 +65,7 @@ const MATRIX_CELL_DATA: Record<string, Record<string, { label: string; sublabel:
   }
 };
 
-export const ClashDetectionView: React.FC<ClashDetectionViewProps> = ({ onTriggerToast }) => {
+export const ClashDetectionView: React.FC<ClashDetectionViewProps> = ({ onTriggerToast, initialFilters }) => {
   // Main sub-section state: Coordination Dashboard vs Full Clash Register
   const [activeSubTab, setActiveSubTab] = useState<'coordination-dashboard' | 'clash-register'>('coordination-dashboard');
 
@@ -86,6 +87,29 @@ export const ClashDetectionView: React.FC<ClashDetectionViewProps> = ({ onTrigge
     floorTitle: string;
     colTitle: string;
   } | null>(null);
+
+  // Apply preset filters passed from other views (e.g. dashboard histogram)
+  useEffect(() => {
+    if (!initialFilters) return;
+    if (initialFilters.severity) setSeverityFilter(initialFilters.severity);
+    if (initialFilters.status) setStatusFilter(initialFilters.status);
+    setFloorLevelFilter('all');
+    setDisciplinePairFilter('all');
+    setTypeFilter('all');
+    setSearchQuery('');
+    setMatrixFilterBadge(
+      initialFilters.label ? { floorTitle: initialFilters.label, colTitle: 'هیستوگرام تعارضات' } : null
+    );
+    setActiveSubTab('clash-register');
+    onTriggerToast(
+      'فیلتر خودکار اعمال شد',
+      initialFilters.label
+        ? `نمایش تعارضات مطابق: ${initialFilters.label}`
+        : 'نمایش تعارضات مطابق فیلتر انتخاب‌شده.',
+      'info'
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Handle clicking ANY cell in the heatmap matrix
   const handleMatrixCellClick = (
@@ -503,15 +527,34 @@ export const ClashDetectionView: React.FC<ClashDetectionViewProps> = ({ onTrigge
                   { label: 'هـ۷', val: 19, h: '32%' },
                   { label: 'جاری', val: 12, h: '22%', isCurrent: true }
                 ].map((col, idx) => (
-                  <div key={idx} className="flex flex-col items-center gap-1 h-full justify-end group">
+                  <div
+                    key={idx}
+                    onClick={() => {
+                      setSearchQuery('');
+                      setStatusFilter('open');
+                      setSeverityFilter('all');
+                      setFloorLevelFilter('all');
+                      setDisciplinePairFilter('all');
+                      setTypeFilter('all');
+                      setMatrixFilterBadge({ floorTitle: `هفته ${col.label}`, colTitle: 'تعارضات حل‌نشده پایان هفته' });
+                      setActiveSubTab('clash-register');
+                      onTriggerToast(
+                        'فیلتر خودکار از هیستوگرام اعمال شد',
+                        `نمایش ${col.val} تعارض حل‌نشده در پایان هفته ${col.label}`,
+                        'info'
+                      );
+                    }}
+                    className="flex flex-col items-center gap-1 h-full justify-end group cursor-pointer"
+                    title={`مشاهده ${col.val} تعارض حل‌نشده هفته ${col.label}`}
+                  >
                     <span className={`text-[10px] font-bold font-mono ${col.isCurrent ? 'text-[#00716B]' : 'text-slate-500'}`}>
                       {col.val}
                     </span>
                     <div
                       className={`w-full rounded-t transition-all ${
                         col.isCurrent
-                          ? 'bg-[#00716B] shadow-xs'
-                          : 'bg-slate-200 hover:bg-[#00716B]/40'
+                          ? 'bg-[#00716B] shadow-xs group-hover:bg-[#00988f]'
+                          : 'bg-slate-200 group-hover:bg-[#00716B]/40'
                       }`}
                       style={{ height: col.h }}
                     ></div>
@@ -524,8 +567,8 @@ export const ClashDetectionView: React.FC<ClashDetectionViewProps> = ({ onTrigge
 
               <div className="flex items-center justify-between text-[11px] text-slate-500">
                 <span className="flex items-center gap-1">
-                  <span className="material-symbols-outlined text-sm text-[#00716B]">trending_down</span>
-                  میانگین حل هفتگی: <strong className="text-slate-700 font-mono">۵.۷</strong> تعارض
+                  <span className="material-symbols-outlined text-sm text-[#00716B]">ads_click</span>
+                  روی هر ستون کلیک کنید تا لیست تعارضات همان هفته نمایش داده شود
                 </span>
                 <span className="text-emerald-700 font-bold">سرعت بهینه رفع تعارض</span>
               </div>

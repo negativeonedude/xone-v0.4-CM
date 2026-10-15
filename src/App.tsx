@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Lenis from 'lenis';
 import 'lenis/dist/lenis.css';
-import { NavigationTab, Project, CdeDocument } from './types';
+import { NavigationTab, Project, CdeDocument, ClashPreset } from './types';
 import { PROJECTS, CDE_DOCUMENTS, APPROVAL_ITEMS, DEFAULT_IPC_CERTIFICATE } from './data/mockData';
 import { Header } from './components/Header';
 import { Sidebar } from './components/Sidebar';
@@ -35,6 +35,13 @@ export default function App() {
   const [isUploadOpen, setIsUploadOpen] = useState(false);
   const [selectedDossierDocId, setSelectedDossierDocId] = useState<string | null>(null);
   const [isExcelIpcOpen, setIsExcelIpcOpen] = useState(false);
+  const [clashPreset, setClashPreset] = useState<ClashPreset | null>(null);
+
+  // Navigate to BIM page with preset clash filters (e.g. from dashboard histogram)
+  const handleOpenClashFilters = (preset: ClashPreset) => {
+    setClashPreset(preset);
+    setCurrentTab('bim');
+  };
 
   // Quick prototype guide toggle
   const [showDemoTour, setShowDemoTour] = useState(false);
@@ -173,6 +180,7 @@ export default function App() {
               onOpenDocumentDossier={handleOpenDocumentDossier}
               onTriggerToast={addToast}
               onOpenExcelIpc={handleOpenExcelIpc}
+              onOpenClashFilters={handleOpenClashFilters}
             />
           )}
 
@@ -189,6 +197,7 @@ export default function App() {
           {currentTab === 'bim' && (
             <ClashDetectionView
               onTriggerToast={addToast}
+              initialFilters={clashPreset}
             />
           )}
 

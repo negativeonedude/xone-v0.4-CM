@@ -102,6 +102,12 @@ export interface IpcCertificate {
   items: IpcItem[];
 }
 
+export interface ClashPreset {
+  severity?: 'critical' | 'medium' | 'low' | 'all';
+  status?: 'open' | 'resolved' | 'pending' | 'all';
+  label?: string;
+}
+
 export interface ClashItem {
   id: string;
   code: string;
